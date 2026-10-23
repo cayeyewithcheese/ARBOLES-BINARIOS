@@ -1,4 +1,10 @@
 
+import java.util.Scanner;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Queue;
+import java.util.LinkedList;
+
 public class BinaryTree {
 
     TreeNode root;
@@ -11,91 +17,375 @@ public class BinaryTree {
         this.root = root;
     }
 
-    /*
-    IMPORTANTE: respete EXACTAMENTE los nombres y firmas de los metodos que se
-    piden abajo; la revision automatica los busca por nombre. Puede agregar
-    todos los metodos auxiliares (privados) que necesite.
-    */
+    // 1. Construccion del arbol
 
-    /*
-    1. Construccion del arbol: implemente aqui
+    public void insertRoot(Object data) {
+        if (root == null) {
+            root = new TreeNode(data);
+        }
+    }
 
-    public void insertRoot(Object data)
-        Si el arbol esta vacio, crea la raiz con 'data'.
+    public TreeNode search(Object data) {
+        return search(root, data);
+    }
 
-    public TreeNode search(Object data)
-        Devuelve el nodo cuyo dato es igual (equals) a 'data', o null si no
-        existe.
+    private TreeNode search(TreeNode node, Object data) {
+        if (node == null) {
+            return null;
+        }
 
-    public boolean insertLeft(Object parent, Object data)
-        Agrega 'data' como hijo izquierdo del nodo cuyo dato es 'parent'.
-        Devuelve false (y no modifica nada) si 'parent' no existe o si ya
-        tiene hijo izquierdo; true en otro caso.
+        if (node.data.equals(data)) {
+            return node;
+        }
 
-    public boolean insertRight(Object parent, Object data)
-        Igual que insertLeft, pero con el hijo derecho.
+        TreeNode found = search(node.left, data);
 
-    public void buildTree(Scanner scanner)
-        Construye el arbol leyendo los datos con 'scanner' (en el main se le
-        pasa new Scanner(System.in)). Primero se lee la raiz y luego, por
-        niveles, el hijo izquierdo y el hijo derecho de cada nodo
-        ("Hijo izquierdo de A: ", "Hijo derecho de A: ", ...). Una linea
-        vacia o "-" significa que ese hijo no existe.
-    */
+        if (found != null) {
+            return found;
+        }
 
-    /*
-    2. Visualizacion: implemente aqui
+        return search(node.right, data);
+    }
 
-    public void printTree()
-        Muestra el arbol en consola de forma grafica, indicando claramente
-        la relacion entre padres e hijos.
-    */
+    public boolean insertLeft(Object parent, Object data) {
+        TreeNode node = search(parent);
 
-    /*
-    3. Recorridos: implemente aqui. Cada recorrido debe ser una funcion
-    RECURSIVA independiente (por ejemplo, un metodo privado que reciba un
-    TreeNode). Los metodos publicos devuelven la secuencia separada por
-    espacios, p.ej. "A B D H I E C F G".
+        if (node == null || node.left != null) {
+            return false;
+        }
 
-    public String preorder()
-    public String inorder()
-    public String postorder()
-    */
+        node.left = new TreeNode(data);
+        return true;
+    }
 
-    /*
-    4. Factores de equilibrio: implemente aqui
+    public boolean insertRight(Object parent, Object data) {
+        TreeNode node = search(parent);
 
-    public int height(TreeNode node)
-        Altura del subarbol que empieza en 'node' (null tiene altura 0 y una
-        hoja altura 1).
+        if (node == null || node.right != null) {
+            return false;
+        }
 
-    public int balanceFactor(TreeNode node)
-        Factor de equilibrio de 'node': height(node.right) - height(node.left).
+        node.right = new TreeNode(data);
+        return true;
+    }
 
-    public boolean isBalanced()
-        true si TODOS los nodos tienen factor de equilibrio -1, 0 o 1.
+    public void buildTree(Scanner scanner) {
+        System.out.print("Dato de la raiz: ");
+        String dato = scanner.nextLine().trim();
 
-    public List<Object> unbalancedNodes()
-        Lista con los datos de los nodos cuyo factor de equilibrio es menor
-        que -1 o mayor que 1 (los que requieren balanceo).
+        if (dato.isEmpty() || dato.equals("-")) {
+            root = null;
+            System.out.println("Arbol vacio.");
+            return;
+        }
 
-    public void printBalanceFactors()
-        Muestra el arbol en consola indicando en cada nodo su factor de
-        equilibrio.
-    */
+        root = new TreeNode(dato);
 
-    /*
-    5. Balanceo AVL: implemente aqui. Cada rotacion recibe la raiz del
-    subarbol desbalanceado y devuelve la NUEVA raiz de ese subarbol.
+        Queue<TreeNode> cola = new LinkedList<>();
+        cola.add(root);
 
-    public TreeNode rotateRight(TreeNode node)       rotacion simple a la derecha
-    public TreeNode rotateLeft(TreeNode node)        rotacion simple a la izquierda
-    public TreeNode rotateLeftRight(TreeNode node)   rotacion doble izquierda-derecha
-    public TreeNode rotateRightLeft(TreeNode node)   rotacion doble derecha-izquierda
+        while (!cola.isEmpty()) {
+            TreeNode actual = cola.remove();
 
-    public void balance()
-        Identifica los nodos desbalanceados y aplica las rotaciones necesarias
-        hasta que el arbol sea AVL (actualiza 'root' si cambia). Debe mostrar
-        el arbol con sus factores de equilibrio antes y despues de balancear.
-    */
+            System.out.print("Hijo izquierdo de "
+                    + actual.data + ": ");
+            String izquierdo = scanner.nextLine().trim();
+
+            if (!izquierdo.isEmpty() && !izquierdo.equals("-")) {
+                actual.left = new TreeNode(izquierdo);
+                cola.add(actual.left);
+            }
+
+            System.out.print("Hijo derecho de "
+                    + actual.data + ": ");
+            String derecho = scanner.nextLine().trim();
+
+            if (!derecho.isEmpty() && !derecho.equals("-")) {
+                actual.right = new TreeNode(derecho);
+                cola.add(actual.right);
+            }
+        }
+
+        System.out.println("Arbol construido correctamente.");
+    }
+
+    // 2. Visualizacion del arbol
+
+    public void printTree() {
+        if (root == null) {
+            System.out.println("El arbol esta vacio.");
+            return;
+        }
+
+        printTree(root, "", true);
+    }
+
+    private void printTree(TreeNode node, String espacios,
+                           boolean ultimo) {
+        if (node == null) {
+            return;
+        }
+
+        System.out.println(espacios
+                + (ultimo ? "+-- " : "|-- ")
+                + node.data);
+
+        String nuevosEspacios = espacios
+                + (ultimo ? "    " : "|   ");
+
+        if (node.left != null && node.right != null) {
+            printTree(node.left, nuevosEspacios, false);
+            printTree(node.right, nuevosEspacios, true);
+        } else if (node.left != null) {
+            printTree(node.left, nuevosEspacios, true);
+        } else if (node.right != null) {
+            printTree(node.right, nuevosEspacios, true);
+        }
+    }
+
+    // 3. Recorridos recursivos
+
+    public String preorder() {
+        List<String> resultado = new ArrayList<>();
+        preorder(root, resultado);
+        return String.join(" ", resultado);
+    }
+
+    private void preorder(TreeNode node, List<String> resultado) {
+        if (node == null) {
+            return;
+        }
+
+        resultado.add(String.valueOf(node.data));
+        preorder(node.left, resultado);
+        preorder(node.right, resultado);
+    }
+
+    public String inorder() {
+        List<String> resultado = new ArrayList<>();
+        inorder(root, resultado);
+        return String.join(" ", resultado);
+    }
+
+    private void inorder(TreeNode node, List<String> resultado) {
+        if (node == null) {
+            return;
+        }
+
+        inorder(node.left, resultado);
+        resultado.add(String.valueOf(node.data));
+        inorder(node.right, resultado);
+    }
+
+    public String postorder() {
+        List<String> resultado = new ArrayList<>();
+        postorder(root, resultado);
+        return String.join(" ", resultado);
+    }
+
+    private void postorder(TreeNode node, List<String> resultado) {
+        if (node == null) {
+            return;
+        }
+
+        postorder(node.left, resultado);
+        postorder(node.right, resultado);
+        resultado.add(String.valueOf(node.data));
+    }
+
+    // 4. Factores de equilibrio
+
+    public int height(TreeNode node) {
+        if (node == null) {
+            return 0;
+        }
+
+        int izquierda = height(node.left);
+        int derecha = height(node.right);
+
+        return 1 + Math.max(izquierda, derecha);
+    }
+
+    public int balanceFactor(TreeNode node) {
+        if (node == null) {
+            return 0;
+        }
+
+        return height(node.right) - height(node.left);
+    }
+
+    public boolean isBalanced() {
+        return isBalanced(root);
+    }
+
+    private boolean isBalanced(TreeNode node) {
+        if (node == null) {
+            return true;
+        }
+
+        int factor = balanceFactor(node);
+
+        if (factor < -1 || factor > 1) {
+            return false;
+        }
+
+        return isBalanced(node.left) && isBalanced(node.right);
+    }
+
+    public List<Object> unbalancedNodes() {
+        List<Object> resultado = new ArrayList<>();
+        unbalancedNodes(root, resultado);
+        return resultado;
+    }
+
+    private void unbalancedNodes(TreeNode node,
+                                 List<Object> resultado) {
+        if (node == null) {
+            return;
+        }
+
+        int factor = balanceFactor(node);
+
+        if (factor < -1 || factor > 1) {
+            resultado.add(node.data);
+        }
+
+        unbalancedNodes(node.left, resultado);
+        unbalancedNodes(node.right, resultado);
+    }
+
+    public void printBalanceFactors() {
+        if (root == null) {
+            System.out.println("El arbol esta vacio.");
+            return;
+        }
+
+        printBalanceFactors(root, "", true);
+    }
+
+    private void printBalanceFactors(TreeNode node,
+                                     String espacios,
+                                     boolean ultimo) {
+        if (node == null) {
+            return;
+        }
+
+        System.out.println(espacios
+                + (ultimo ? "+-- " : "|-- ")
+                + node.data + " (FE: "
+                + balanceFactor(node) + ")");
+
+        String nuevosEspacios = espacios
+                + (ultimo ? "    " : "|   ");
+
+        if (node.left != null && node.right != null) {
+            printBalanceFactors(node.left, nuevosEspacios, false);
+            printBalanceFactors(node.right, nuevosEspacios, true);
+        } else if (node.left != null) {
+            printBalanceFactors(node.left, nuevosEspacios, true);
+        } else if (node.right != null) {
+            printBalanceFactors(node.right, nuevosEspacios, true);
+        }
+    }
+
+    // 5. Rotaciones AVL
+
+    public TreeNode rotateRight(TreeNode node) {
+        if (node == null || node.left == null) {
+            return node;
+        }
+
+        TreeNode nuevaRaiz = node.left;
+        TreeNode medio = nuevaRaiz.right;
+
+        nuevaRaiz.right = node;
+        node.left = medio;
+
+        return nuevaRaiz;
+    }
+
+    public TreeNode rotateLeft(TreeNode node) {
+        if (node == null || node.right == null) {
+            return node;
+        }
+
+        TreeNode nuevaRaiz = node.right;
+        TreeNode medio = nuevaRaiz.left;
+
+        nuevaRaiz.left = node;
+        node.right = medio;
+
+        return nuevaRaiz;
+    }
+
+    public TreeNode rotateLeftRight(TreeNode node) {
+        if (node == null) {
+            return null;
+        }
+
+        node.left = rotateLeft(node.left);
+        return rotateRight(node);
+    }
+
+    public TreeNode rotateRightLeft(TreeNode node) {
+        if (node == null) {
+            return null;
+        }
+
+        node.right = rotateRight(node.right);
+        return rotateLeft(node);
+    }
+
+    public void balance() {
+        System.out.println("\nArbol antes de balancear:");
+        printBalanceFactors();
+
+        root = balanceSubtree(root);
+
+        System.out.println("\nArbol despues de balancear:");
+        printBalanceFactors();
+
+        if (isBalanced()) {
+            System.out.println("El arbol quedo balanceado.");
+        } else {
+            System.out.println(
+                    "El arbol aun tiene nodos desbalanceados.");
+        }
+    }
+
+    private TreeNode balanceSubtree(TreeNode node) {
+        if (node == null) {
+            return null;
+        }
+
+        node.left = balanceSubtree(node.left);
+        node.right = balanceSubtree(node.right);
+
+        int factor = balanceFactor(node);
+
+        if (factor < -1) {
+            if (balanceFactor(node.left) > 0) {
+                node = rotateLeftRight(node);
+            } else {
+                node = rotateRight(node);
+            }
+        } else if (factor > 1) {
+            if (balanceFactor(node.right) < 0) {
+                node = rotateRightLeft(node);
+            } else {
+                node = rotateLeft(node);
+            }
+        }
+
+        // Revisa nuevamente el subarbol despues de la rotacion.
+        if (node != null
+                && (balanceFactor(node) < -1
+                || balanceFactor(node) > 1)) {
+            return balanceSubtree(node);
+        }
+
+        return node;
+    }
 }
+
+
