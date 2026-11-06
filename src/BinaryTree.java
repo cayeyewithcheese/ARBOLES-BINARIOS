@@ -17,7 +17,7 @@ public class BinaryTree {
         this.root = root;
     }
 
-    // 1. Construccion del arbol
+
 
     public void insertRoot(Object data) {
         if (root == null) {
@@ -109,7 +109,7 @@ public class BinaryTree {
         System.out.println("Arbol construido correctamente.");
     }
 
-    // 2. Visualizacion del arbol
+
 
     public void printTree() {
         if (root == null) {
@@ -143,7 +143,7 @@ public class BinaryTree {
         }
     }
 
-    // 3. Recorridos recursivos
+
 
     public String preorder() {
         List<String> resultado = new ArrayList<>();
@@ -193,7 +193,6 @@ public class BinaryTree {
         resultado.add(String.valueOf(node.data));
     }
 
-    // 4. Factores de equilibrio
 
     public int height(TreeNode node) {
         if (node == null) {
@@ -288,7 +287,7 @@ public class BinaryTree {
         }
     }
 
-    // 5. Rotaciones AVL
+
 
     public TreeNode rotateRight(TreeNode node) {
         if (node == null || node.left == null) {
@@ -377,7 +376,7 @@ public class BinaryTree {
             }
         }
 
-        // Revisa nuevamente el subarbol despues de la rotacion.
+
         if (node != null
                 && (balanceFactor(node) < -1
                 || balanceFactor(node) > 1)) {

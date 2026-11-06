@@ -1,7 +1,8 @@
-
+import java.util.Scanner;
 public class Main {
 
     public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
 
         // Ejemplo: arbol del enunciado
         //            A
@@ -23,6 +24,77 @@ public class Main {
         a.left.left.left = new TreeNode("H");
         a.left.left.right = new TreeNode("I");
 
+        int opcion = 0;
+
+        do {
+                    System.out.println("\n========== MENU ==========");
+                    System.out.println("1. Construir arbol");
+                    System.out.println("2. Mostrar arbol");
+                    System.out.println("3. Recorrido Preorden");
+                    System.out.println("4. Recorrido Inorden");
+                    System.out.println("5. Recorrido Posorden");
+                    System.out.println("6. Mostrar factores de equilibrio");
+                    System.out.println("7. Balancear arbol (AVL)");
+                    System.out.println("8. Salir");
+                    System.out.println("==========================");
+                    System.out.print("Seleccione una opcion: ");
+
+                    String entrada = scanner.nextLine();
+
+                    try {
+                        opcion = Integer.parseInt(entrada);
+                    } catch (NumberFormatException e) {
+                        opcion = 0;
+                    }
+
+                    switch (opcion) {
+                        case 1:
+                            tree.buildTree(scanner);
+                            break;
+
+                        case 2:
+                            tree.printTree();
+                            break;
+
+                        case 3:
+                            System.out.println("Preorden: " + tree.preorder());
+                            break;
+
+                        case 4:
+                            System.out.println("Inorden: " + tree.inorder());
+                            break;
+
+                        case 5:
+                            System.out.println("Posorden: " + tree.postorder());
+                            break;
+
+                        case 6:
+                            tree.printBalanceFactors();
+                            System.out.println("Nodos desbalanceados: "
+                                    + tree.unbalancedNodes());
+                            System.out.println("Arbol balanceado: "
+                                    + tree.isBalanced());
+                            break;
+
+                        case 7:
+                            tree.balance();
+                            break;
+
+                        case 8:
+                            System.out.println("Programa finalizado.");
+                            break;
+
+                        default:
+                            System.out.println("Opcion no valida.");
+                    }
+
+                } while (opcion != 8);
+
+                scanner.close();
+            }
+        }
+
+
         /*
         Implemente aqui el menu (cada opcion llama al metodo de BinaryTree
         indicado entre parentesis):
@@ -38,5 +110,4 @@ public class Main {
         ==========================
         Seleccione una opcion:
         */
-    }
-}
+
